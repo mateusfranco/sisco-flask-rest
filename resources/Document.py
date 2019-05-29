@@ -28,16 +28,17 @@ class Document_CRUD(Resource):
 
     def post(self):
         json_data = data_json()
-        if(verify_token(json_data)):
+        if(not verify_token(json_data)):
             return jsonify({'message': 'token wrong'}), 400
-        document = Document(name= json_data["name"],
-                                category= json_data["category"],
-                                user= json_data["user_id"],
-                                avaliado= False,
-                                directory = json_data["directory"])
+        document = Document(name = json_data["name"] + json_data["email"], # com isso o nome do arquivo vai ficar com o id do usuario na frente resolvendo o problema de arquivos com nomes iguais
+                                category = json_data["category"],
+                                user = json_data["email"],
+                                avaliado = False,
+                                directory = './arquivos',
+                                time = json_data["time"] )
         db.session.add(document)
         db.session.commit()
-        return 200
+        return jsonify({'status':200})
 
     def put(self):
         json_data = data_json()
